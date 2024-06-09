@@ -28,42 +28,53 @@ public class ClienteControle {
 	private ClienteSelecionador selecionador;
 
 	@GetMapping("/cliente/{id}")
-	public Cliente obterCliente(@PathVariable long id) {
+	public ResponseEntity<Cliente> obterCliente(@PathVariable long id) {
 		List<Cliente> clientes = repositorio.findAll();
-		return selecionador.selecionar(clientes, id);
+		Cliente cliente = selecionador.selecionar(clientes, id);
+		if(cliente != null) {
+			return new ResponseEntity<Cliente>(cliente, HttpStatus.FOUND);
+		}
+		else {
+			return new ResponseEntity<Cliente>(HttpStatus.NOT_FOUND);
+		}
 	}
 
 	@GetMapping("/clientes")
-	public List<Cliente> obterClientes() {
+	public ResponseEntity<List<Cliente>> obterClientes() {
 		List<Cliente> clientes = repositorio.findAll();
-		return clientes;
+		if(!clientes.isEmpty()) {
+			return new ResponseEntity<List<Cliente>>(clientes, HttpStatus.FOUND);
+		}
+		else {
+			return new ResponseEntity<List<Cliente>>(HttpStatus.NOT_FOUND);
+		}
 	}
 
 	@PostMapping("/cadastro")
-	public ResponseEntity<String> cadastrarCliente(@RequestBody Cliente cliente) {
+	public ResponseEntity<?> cadastrarCliente(@RequestBody Cliente cliente) {
 		repositorio.save(cliente);
-		return ResponseEntity.status(HttpStatus.CREATED).body("Cliente cadastrado com sucesso!");
+		return new ResponseEntity<>(HttpStatus.CREATED); 
 	}
 
 	@PutMapping("/atualizar")
-	public ResponseEntity<String> atualizarCliente(@RequestBody Cliente atualizacao) {
+	public ResponseEntity<?> atualizarCliente(@RequestBody Cliente atualizacao) {
 		Cliente cliente = repositorio.getById(atualizacao.getId());
 		if (cliente == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente não encontrado!");
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		ClienteAtualizador atualizador = new ClienteAtualizador();
 		atualizador.atualizar(cliente, atualizacao);
 		repositorio.save(cliente);
-		return ResponseEntity.ok("Cliente atualizado com sucesso!");
+		return new ResponseEntity<>(HttpStatus.ACCEPTED);
 	}
 
 	@DeleteMapping("/excluir")
-	public ResponseEntity<String> excluirCliente(@RequestBody Cliente exclusao) {
+	public ResponseEntity<?> excluirCliente(@RequestBody Cliente exclusao) {
 		Cliente cliente = repositorio.findById(exclusao.getId()).orElse(null);
 		if(cliente == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente não encontrado.");
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		repositorio.delete(cliente);
-		return ResponseEntity.ok("Cliente deletado com sucesso!");
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }

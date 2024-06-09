@@ -28,31 +28,36 @@ public class TelefoneControle {
 	private ClienteRepositorio cliRepo;
 	
 	@PostMapping("/cadastrar")
-	public ResponseEntity<String> cadastrar(@RequestBody Telefone telefone) {
+	public ResponseEntity<?> cadastrar(@RequestBody Telefone telefone) {
 		Cliente cliente = cliRepo.findByNome(telefone.getTitular());
 		if(cliente == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Titular não encontrado!");
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		if(cliente.getNome().equals(telefone.getTitular())){
 			cliente.getTelefones().add(telefone);
 			repositorio.save(telefone);
-			return ResponseEntity.ok("Telefone cadastrado com sucesso");
+			return new ResponseEntity<>(HttpStatus.CREATED);
 		}
 		else {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Algo deu errado :(");
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
 	
 	@GetMapping("/telefones")
-	public List<Telefone> listar(){
+	public ResponseEntity<List<Telefone>> listar(){
 		List<Telefone> telefones = repositorio.findAll();
-		return telefones;
+		if(!telefones.isEmpty()) {
+			return new ResponseEntity<List<Telefone>>(telefones, HttpStatus.FOUND);
+		}
+		else {
+			return new ResponseEntity<List<Telefone>>(HttpStatus.NOT_FOUND);
+		}
 	}
 	@DeleteMapping("/excluir")
-	public ResponseEntity<String> deletar(@RequestBody Telefone exclusao) {
+	public ResponseEntity<?> deletar(@RequestBody Telefone exclusao) {
 		Telefone telefone = repositorio.findById(exclusao.getId()).orElse(null);
 		if (telefone == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Telefone não encontrado!");
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		Cliente cliente = cliRepo.findByNome(telefone.getTitular());
 		if(cliente != null) {
@@ -60,21 +65,21 @@ public class TelefoneControle {
 			if(removido) {
 				cliRepo.save(cliente);
 				repositorio.delete(telefone);
-				return ResponseEntity.ok("Telefone excluído com sucesso!");
+				return new ResponseEntity<>(HttpStatus.OK);
 			}
 			else {
-				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Telefone não encontrado na lista de telefones do cliente");
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			}
 		}
 		else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente não encontrado!");
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 	}
 	@PutMapping("/atualizar")
-	public ResponseEntity<String> atualizar(@RequestBody Telefone atualizacao) {
+	public ResponseEntity<?> atualizar(@RequestBody Telefone atualizacao) {
 		Telefone telefone = repositorio.findById(atualizacao.getId()).orElse(null);
 		if (telefone == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Telefone não encontrado");
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		Cliente cliente = cliRepo.findByNome(telefone.getTitular());
 		if(cliente != null) {
@@ -88,14 +93,14 @@ public class TelefoneControle {
 				
 				cliRepo.save(cliente);
 				repositorio.save(telefone);
-				return ResponseEntity.ok("Telefone atualizado com sucesso!");
+				return new ResponseEntity<>(HttpStatus.ACCEPTED);
 			}
 			else {
-				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Telefone não encontrado na lista de telefones do cliente!");
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			}
 		}
 		else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente não encontrado!");
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 	}
 }

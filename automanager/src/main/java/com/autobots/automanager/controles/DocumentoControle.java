@@ -28,31 +28,37 @@ public class DocumentoControle {
 	private ClienteRepositorio cliRepo;
 	
 	@PostMapping("/cadastrar")
-	public ResponseEntity<String> cadastrar(@RequestBody Documento documento) {
+	public ResponseEntity<?> cadastrar(@RequestBody Documento documento) {
 		Cliente cliente = cliRepo.findByNome(documento.getTitular());
 		if(cliente == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Titular não encontrado!");
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		if(cliente.getNome().equals(documento.getTitular())){
 			cliente.getDocumentos().add(documento);
 			repositorio.save(documento);
-			return ResponseEntity.ok("Documento cadastrado com sucesso");
+			return new ResponseEntity<>(HttpStatus.CREATED);
 		}
 		else {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Algo deu errado :(");
+			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
 	}
 	
 	@GetMapping("/documentos")
-	public List<Documento> listar(){
+	public ResponseEntity<List<Documento>> listar(){
 		List<Documento> documentos = repositorio.findAll();
-		return documentos;
+		if(!documentos.isEmpty()) {
+			return new ResponseEntity<List<Documento>>(documentos, HttpStatus.FOUND);
+		}
+		else {
+			return new ResponseEntity<List<Documento>>(HttpStatus.NOT_FOUND);
+		}
 	}
+	
 	@DeleteMapping("/excluir")
-	public ResponseEntity<String> deletar(@RequestBody Documento exclusao) {
+	public ResponseEntity<?> deletar(@RequestBody Documento exclusao) {
 		Documento documento = repositorio.findById(exclusao.getId()).orElse(null);
 		if (documento == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Documento não encontrado!");
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		Cliente cliente = cliRepo.findByNome(documento.getTitular());
 		if(cliente != null) {
@@ -60,21 +66,21 @@ public class DocumentoControle {
 			if(removido) {
 				cliRepo.save(cliente);
 				repositorio.delete(documento);
-				return ResponseEntity.ok("Documento excluído com sucesso!");
+				return new ResponseEntity<>(HttpStatus.OK);
 			}
 			else {
-				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Documento não encontrado na lista de documentos do cliente");
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			}
 		}
 		else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente não encontrado!");
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 	}
 	@PutMapping("/atualizar")
-	public ResponseEntity<String> atualizar(@RequestBody Documento atualizacao) {
+	public ResponseEntity<?> atualizar(@RequestBody Documento atualizacao) {
 		Documento documento = repositorio.findById(atualizacao.getId()).orElse(null);
 		if (documento == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Documento não encontrado");
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		Cliente cliente = cliRepo.findByNome(documento.getTitular());
 		if(cliente != null) {
@@ -88,14 +94,14 @@ public class DocumentoControle {
 				
 				cliRepo.save(cliente);
 				repositorio.save(documento);
-				return ResponseEntity.ok("Documento atualizado com sucesso!");
+				return new ResponseEntity<>(HttpStatus.ACCEPTED);
 			}
 			else {
-				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Documento não encontrado na lista de documentos do cliente!");
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			}
 		}
 		else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente não encontrado!");
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 	}
 	

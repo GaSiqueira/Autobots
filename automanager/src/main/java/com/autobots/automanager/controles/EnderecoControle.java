@@ -28,30 +28,36 @@ public class EnderecoControle {
 	private EnderecoRepositorio repositorio;
 	
 	@PostMapping("/cadastrar")
-	public ResponseEntity<String> cadastrar(@RequestBody Endereco endereco){
+	public ResponseEntity<?> cadastrar(@RequestBody Endereco endereco){
 		Cliente cliente = cliRepo.findByNome(endereco.getTitular());
 		if(cliente.getEndereco() != null) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("O titular fornecido já tem endereço cadastrado!");
+			return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
 		}
 		else if(cliente.getEndereco() == null) {
 			cliente.setEndereco(endereco);
 			cliRepo.save(cliente);
 			repositorio.save(endereco);
-			return ResponseEntity.ok("Endereço cadastrado com sucesso!");			
+			return new ResponseEntity<>(HttpStatus.CREATED);			
 		}
-		return null;
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 	
 	@GetMapping("/enderecos")
-	public List<Endereco> listar(){
-		return repositorio.findAll();
+	public ResponseEntity<List<Endereco>> listar(){
+		List<Endereco> enderecos = repositorio.findAll();
+		if(!enderecos.isEmpty()) {
+			return new ResponseEntity<List<Endereco>>(enderecos, HttpStatus.FOUND);
+		}
+		else {
+			return new ResponseEntity<List<Endereco>>(HttpStatus.NOT_FOUND);
+		}
 	}
 	
 	@PutMapping("/atualizar")
-	public ResponseEntity<String> atualizar(@RequestBody Endereco atualizacao){
+	public ResponseEntity<?> atualizar(@RequestBody Endereco atualizacao){
 		Endereco endereco = repositorio.findById(atualizacao.getId()).orElse(null);
 		if (endereco == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Endereço não encontrado!");
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		Cliente cliente = cliRepo.findByNome(endereco.getTitular());
 		if(cliente != null) {
@@ -63,29 +69,29 @@ public class EnderecoControle {
 			
 			cliRepo.save(cliente);
 			repositorio.save(endereco);
-			return ResponseEntity.ok("Endereço atualizado com sucesso!");
+			return new ResponseEntity<>(HttpStatus.ACCEPTED);
 			
 		}
 		else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente não encontrado!");
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 	}
 	
 	@DeleteMapping("/excluir")
-	public ResponseEntity<String> deletar(@RequestBody Endereco exclusao) {
+	public ResponseEntity<?> deletar(@RequestBody Endereco exclusao) {
 		Endereco endereco = repositorio.findById(exclusao.getId()).orElse(null);
 		if (endereco == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Endereço não encontrado!");
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		Cliente cliente = cliRepo.findByNome(endereco.getTitular());
 		if(cliente != null) {
 			cliente.setEndereco(null);
 			cliRepo.save(cliente);
 			repositorio.delete(endereco);
-			return ResponseEntity.ok("Endereço excluído com sucesso!");
+			return new ResponseEntity<>(HttpStatus.OK);
 		}
 		else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente não encontrado!");
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 	}
 	
