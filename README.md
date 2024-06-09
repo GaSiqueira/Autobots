@@ -10,10 +10,10 @@ Observação: Para rodar o projeto é necessário:
 ```
   git clone https://github.com/GaSiqueira/Autobots.git .
 ```
-- Acesse a branch da atividade 1:
+- Acesse a branch da atividade 2:
 
 ```
-  git checkout Atv1
+  git checkout Atv2
 ```
 - Abra a pasta do projeto com sua IDE e rode a aplicação;
 - Caso esteja usando o Eclipe, clique no botão File no canto superior direito e selecione *Open projects from file system*
