@@ -2,6 +2,7 @@
 Observação: Para rodar o projeto é necessário:
 - Uma IDE (integrated development environment);
 - Uma ferramenta de envio de requisições *HTTP* como o *Insomnia*;
+- Java versão 17 ou superior;
 - Lombok instalado na usa máquina (opcional).<br/>
 #### Atenção: caso não tenha o Lombok instalado, é provavél que algumas atividades não funcionem corretamente, caso ocorra defina os métodos GET e SET das classes de entidades!.
 
