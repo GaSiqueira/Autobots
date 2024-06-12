@@ -40,12 +40,13 @@ public class MercadoriaControle {
 		Usuario usuario = listagem.buscarUsuario(id);
 		Empresa empresa = listagem.buscarEmpresa(usuario.getIdEmpresa());
 		if (usuario != null && empresa != null) {
+			cadastro.cadastrar(mercadoria);
+			
 			empresa.getMercadorias().add(mercadoria);
 			usuario.getMercadorias().add(mercadoria);
 			
 			cadastro.cadastrar(usuario);
 			cadastro.cadastrar(empresa);
-			cadastro.cadastrar(mercadoria);
 			
 			return new ResponseEntity<>(HttpStatus.CREATED);
 		}

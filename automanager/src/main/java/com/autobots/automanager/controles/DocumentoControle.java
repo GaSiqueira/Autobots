@@ -37,9 +37,9 @@ public class DocumentoControle {
 	public ResponseEntity<?> cadastrar(@RequestBody Documento documento, @PathVariable Long id){
 		Usuario usuario = listagem.buscarUsuario(id);
 		if(usuario != null) {
+			cadastro.cadastrar(documento);
 			usuario.getDocumentos().add(documento);
 			cadastro.cadastrar(usuario);
-			cadastro.cadastrar(documento);
 			return new ResponseEntity<>(HttpStatus.CREATED);
 		}
 		else {

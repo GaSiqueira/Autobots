@@ -57,7 +57,7 @@ public class ServicoAtualizador {
 		if(!user.getNome().equals(novoUser.getNome())) {
 			user.setNome(novoUser.getNome());
 		}
-		if(!user.getNomeSocial().equals(novoUser.getNome())) {
+		if(!user.getNomeSocial().equals(novoUser.getNome())){
 			user.setNomeSocial(novoUser.getNomeSocial());			
 		}
 		if(user.getIdEmpresa() != novoUser.getIdEmpresa()) {
@@ -81,15 +81,6 @@ public class ServicoAtualizador {
 		if(!documento.getNumero().equals(novoDocumento.getNumero())) {
 			documento.setNumero(novoDocumento.getNumero());
 		}
-		for(Usuario user : userRepo.findAll()) {
-			for(Documento docu : user.getDocumentos()) {
-				if(documento.getId().equals(documento.getId())) {
-					user.getDocumentos().remove(docu);
-					user.getDocumentos().add(documento);
-					userRepo.save(user);
-				}
-			}
-		}
 		documentoRepo.save(documento);
 	}
 	
@@ -112,15 +103,8 @@ public class ServicoAtualizador {
 		if(!endereco.getCodigoPostal().equals(novoEndereco.getCodigoPostal())) {
 			endereco.setCodigoPostal(novoEndereco.getCodigoPostal());
 		}
-		if(!endereco.getInformacoesAdicionais().equals(novoEndereco.getInformacoesAdicionais())) {
+		if(!endereco.getInformacoesAdicionais().equals(novoEndereco.getInformacoesAdicionais()) && endereco.getInformacoesAdicionais() == null) {
 			endereco.setInformacoesAdicionais(novoEndereco.getInformacoesAdicionais());
-		}
-		for (Usuario user : userRepo.findAll()) {
-			if(user.getEndereco().getId().equals(endereco.getId())) {
-				user.setEndereco(null);
-				user.setEndereco(endereco);
-				userRepo.save(user);
-			}
 		}
 		enderecoRepo.save(endereco);
 	}
@@ -128,15 +112,6 @@ public class ServicoAtualizador {
 	public void atualizar (Email email, Email novoEmail) {
 		if(!email.getEndereco().equals(novoEmail.getEndereco())) {
 			email.setEndereco(novoEmail.getEndereco());
-		}
-		for(Usuario user : userRepo.findAll()) {
-			for(Email emai : user.getEmails()) {
-				if(email.getId().equals(email.getId())) {
-					user.getEmails().remove(emai);
-					user.getEmails().add(email);
-					userRepo.save(user);
-				}
-			}
 		}
 		emailRepo.save(email);
 	}
@@ -159,26 +134,7 @@ public class ServicoAtualizador {
 		}
 		if(!mercadoria.getDescricao().equals(novaMercadoria.getDescricao())) {
 			mercadoria.setDescricao(novaMercadoria.getDescricao());
-		}
-		for (Usuario user: userRepo.findAll()) {
-			for(Mercadoria merca: user.getMercadorias()) {
-				if(mercadoria.getId() == mercadoria.getId()) {
-					user.getMercadorias().remove(merca);
-					user.getMercadorias().add(mercadoria);
-					userRepo.save(user);
-				}
-			}
-		}
-		for (Empresa empresa : empresaRepo.findAll()) {
-			for(Mercadoria merca : empresa.getMercadorias()) {
-				if(mercadoria.getId().equals(mercadoria.getId())) {
-					empresa.getMercadorias().remove(merca);
-					empresa.getMercadorias().add(mercadoria);
-					empresaRepo.save(empresa);
-				}
-			}
-		}
-		
+		}	
 		mercadoriaRepo.save(mercadoria);
 	}
 	
@@ -191,15 +147,6 @@ public class ServicoAtualizador {
 		}
 		if(!servico.getDescricao().equals(novoServico.getDescricao())) {
 			servico.setDescricao(novoServico.getDescricao());
-		}
-		for (Empresa empresa : empresaRepo.findAll()) {
-			for(Servico serv : empresa.getServicos()) {
-				if(servico.getId().equals(servico.getId())) {
-					empresa.getServicos().remove(serv);
-					empresa.getServicos().add(servico);
-					empresaRepo.save(empresa);
-				}
-			}
 		}
 		servicoRepo.save(servico);
 	}
@@ -217,15 +164,6 @@ public class ServicoAtualizador {
 		if(!veiculo.getProprietario().equals(novoVeiculo.getProprietario())) {
 			veiculo.setProprietario(novoVeiculo.getProprietario());
 		}
-		for(Usuario user : userRepo.findAll()) {
-			for(Veiculo carro: user.getVeiculos()) {
-				if(veiculo.getId().equals(veiculo.getId())) {
-					user.getVeiculos().remove(carro);
-					user.getVeiculos().add(veiculo);
-					userRepo.save(user);
-				}
-			}
-		}
 		veiculoRepo.save(veiculo);
 	}
 	
@@ -238,35 +176,7 @@ public class ServicoAtualizador {
 		}
 		if(!venda.getVeiculo().equals(novaVenda.getVeiculo())) {
 			venda.setVeiculo(novaVenda.getVeiculo());
-		}
-		for(Empresa empresa : empresaRepo.findAll()) {
-			for(Venda ven : empresa.getVendas()) {
-				if(ven.getId().equals(venda.getId())) {
-					empresa.getVendas().remove(ven);
-					empresa.getVendas().add(venda);
-					empresaRepo.save(empresa);
-				}
-			}
-		}
-		for(Usuario user : userRepo.findAll()) {
-			for(Venda ven : user.getVendas()) {
-				if(ven.getId().equals(venda.getId())) {
-					user.getVendas().remove(ven);
-					user.getVendas().add(venda);
-					userRepo.save(user);
-				}
-			}
-		}
-		for(Veiculo veiculo : veiculoRepo.findAll()) {
-			for(Venda ven : veiculo.getVendas()) {
-				if(ven.getId().equals(venda.getId())) {
-					veiculo.getVendas().remove(ven);
-					veiculo.getVendas().add(venda);
-					veiculoRepo.save(veiculo);
-				}
-			}
-		}
-		
+		}	
 		vendaRepo.save(venda);
 	}
 }

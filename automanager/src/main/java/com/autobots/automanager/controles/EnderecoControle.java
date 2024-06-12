@@ -37,9 +37,9 @@ public class EnderecoControle {
 	public ResponseEntity<?> cadastrar(@RequestBody Endereco endereco , @PathVariable Long id){
 		Usuario usuario = listagem.buscarUsuario(id);
 		if(usuario != null) {
+			cadastro.cadastrar(endereco);
 			usuario.setEndereco(endereco);
 			cadastro.cadastrar(usuario);
-			cadastro.cadastrar(endereco);
 			return new ResponseEntity<>(HttpStatus.CREATED);
 		}
 		else {

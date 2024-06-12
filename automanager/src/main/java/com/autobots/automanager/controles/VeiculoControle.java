@@ -37,10 +37,10 @@ public class VeiculoControle {
 	public ResponseEntity<?> cadastrar(@RequestBody Veiculo veiculo, @PathVariable Long id){
 		Usuario usuario = listagem.buscarUsuario(id);
 		if(usuario != null) {
-			usuario.getVeiculos().add(veiculo);
 			veiculo.setProprietario(usuario);
-			cadastro.cadastrar(usuario);
 			cadastro.cadastrar(veiculo);
+			usuario.getVeiculos().add(veiculo);
+			cadastro.cadastrar(usuario);
 			return new ResponseEntity<>(HttpStatus.CREATED);
 		}
 		else {

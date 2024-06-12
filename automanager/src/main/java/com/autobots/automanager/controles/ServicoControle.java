@@ -37,9 +37,9 @@ public class ServicoControle {
 	public ResponseEntity<?> cadastrar(@RequestBody Servico servico, @PathVariable Long id){
 		Empresa empresa = listagem.buscarEmpresa(id);
 		if(empresa != null) {
+			cadastro.cadastrar(servico);
 			empresa.getServicos().add(servico);
 			cadastro.cadastrar(empresa);
-			cadastro.cadastrar(servico);
 			return new ResponseEntity<>(HttpStatus.CREATED);
 		}
 		else {

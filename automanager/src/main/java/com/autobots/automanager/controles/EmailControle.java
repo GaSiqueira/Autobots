@@ -37,9 +37,9 @@ public class EmailControle {
 	public ResponseEntity<?> cadastrar(@RequestBody Email email, @PathVariable Long id){
 		Usuario usuario = listagem.buscarUsuario(id);
 		if(usuario != null) {
+			cadastro.cadastrar(email);
 			usuario.getEmails().add(email);
 			cadastro.cadastrar(usuario);
-			cadastro.cadastrar(email);
 			return new ResponseEntity<>(HttpStatus.CREATED);
 		}
 		else {
