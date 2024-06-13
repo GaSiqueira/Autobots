@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.autobots.automanager.entidades.CredencialUsuarioSenha;
 import com.autobots.automanager.entidades.Empresa;
 import com.autobots.automanager.entidades.Usuario;
+import com.autobots.automanager.enumeracoes.PerfilUsuario;
 import com.autobots.automanager.servicos.ServicoAtualizador;
 import com.autobots.automanager.servicos.ServicoCadastro;
 import com.autobots.automanager.servicos.ServicoListagem;
@@ -35,15 +36,14 @@ public class UsuarioControle {
 	private ServicoAtualizador atualizador;
 	
 	
-	@PostMapping("/cadastrar/{id}")
+	@PostMapping("/cadastrar-fornecedor/{id}")
 	public ResponseEntity<?> cadastrar (@RequestBody Usuario user, @PathVariable Long id){
 		Empresa empresa = listagem.buscarEmpresa(id);
 		if(empresa != null) {
-			if(user.getPerfis().toString().contains("FORNECEDOR")) {
-				if(user.getMercadorias().size() > 0) {
-					empresa.getMercadorias().addAll(user.getMercadorias());
-				}
+			if(user.getMercadorias().size() > 0) {
+				empresa.getMercadorias().addAll(user.getMercadorias());
 			}
+			
 			user.setIdEmpresa(empresa.getId());
 			user.setEmpresa(empresa.getNomeFantasia());
 			cadastro.cadastrar(user);
@@ -56,6 +56,28 @@ public class UsuarioControle {
 		else {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
+	}
+	
+	@PostMapping("/cadastrar-cliente")
+	public ResponseEntity<?> cadastrarCliente (@RequestBody Usuario cliente){
+		cliente.getPerfis().add(PerfilUsuario.CLIENTE);
+		cadastro.cadastrar(cliente);
+		return new ResponseEntity<>(HttpStatus.CREATED);
+	}
+	
+	@PostMapping("/cadastrar-funcionario/{id}")
+	public ResponseEntity<?> cadastrarFuncionario (@RequestBody Usuario funcionario, @PathVariable Long id){
+		Empresa empresa = listagem.buscarEmpresa(id);
+		if(empresa != null) {
+			funcionario.getPerfis().add(PerfilUsuario.FUNCIONARIO);
+			funcionario.setIdEmpresa(empresa.getId());
+			funcionario.setEmpresa(empresa.getNomeFantasia());
+			cadastro.cadastrar(funcionario);
+			empresa.getUsuarios().add(funcionario);
+			cadastro.cadastrar(empresa);
+			return new ResponseEntity<>(HttpStatus.CREATED);
+		}
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 	
 	@GetMapping("/listar")
