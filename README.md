@@ -22,3 +22,5 @@ Observação: Para rodar o projeto é necessário:
 - Após o projeto ser contruído, acesse o caminho de pastas: *automanager\src\main\java\com\autobots\automanager*
 - Clique duas vezes em *AutomanagerApplication.java* e clique no botão verde de *play* na barra superior
 - Se tudo ocorreu bem, a aplicação agora está funcionando! :)
+
+### *OBS: Para a aplicação API repita os passos anteriores!*
